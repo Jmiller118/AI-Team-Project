@@ -1,16 +1,6 @@
 import numpy as np
-
-up = 1
-down = 2
-left = 3
-right = 4
-shoot_up = 5
-shoot_down = 6
-shoot_left = 7
-shoot_right = 8
-
-
-
+import Q-learning.py
+from f
 
 Class Environment(object):
 
@@ -25,7 +15,7 @@ Class Environment(object):
         self.num_cave = cave
         self.num_arrow = arrow
 
-        random_start = np.random.choice(self.cases, self.num_wumpus + self.num_cave, replace=False)
+        random_start = np.random.choice(self.cases, self.num_wumpus + self.num_cave + 2, replace=False)
         random_location = [ (n % self.grid[1], n // self.grid[1]) for n in random_start]
         
         self.location = random_location[-1]
@@ -38,7 +28,7 @@ Class Environment(object):
 
     def reset(self):
         #reset for a new training
-        self.arrow = self.arrow
+        self.arrow = self.num_arrow
         self.wumpus = list(self.wumpus_location)
         self.caves = list(self.cave_location)
         self.gold = self.gold_location
@@ -61,7 +51,7 @@ Class Environment(object):
 
     def detect_nearby(self):
         #if something is nearby it will detect it
-        return (self.agent, self.wumpus_nearby, self.cave_nearby, self.arrow)
+        return (self.agent, self.wumpus_nearby(), self.cave_nearby(), self.arrow)
 
     def move(self, loc, act):
         (x, y) = loc
@@ -84,7 +74,7 @@ Class Environment(object):
         return (x, y)
 
     def move_wumpus(self):
-        self.wumpus = [self.move(loc, action) for (loc, action) in zip(self.wumpus, np.random.randint(1, 5, self
+        self.wumpus = [self.move(loc, action) for (loc, action) in zip(self.wumpus, np.random.randint(1, 5, self.num_wumpus))]
 
     def kill_wumpus(self, loc):
         if loc in self.wumpus:
