@@ -1,5 +1,12 @@
-'''
+from env import Environment
+env = Environment()
+# env.reset => reset the env and return init state
+# env.get_state(action) => given the action, return: (next state, if it's terminal state, reward)
+import numpy as np
+import cPickle as pickle
+"""
 action lookup:
+no_action = 0
 up = 1
 down = 2
 left = 3
@@ -8,12 +15,7 @@ shoot_up = 5
 shoot_down = 6
 shoot_left = 7
 shoot_right = 8
-'''
-# import env
-# env.reset => reset the env and return init state
-# env.get_state(action) => given the action, return: (next state, if it's terminal state, reward)
-import numpy
-
+"""
 # init q_table
 q_table = {}
 
@@ -21,22 +23,25 @@ q_table = {}
 alpha = 0.1
 gamma = 0.9
 num_itr = 1000
-
+N_ACTIONS = 8
 # stochastic move possibility
 epsilon = 0.8
 
 for i in range(1,num_itr):
-    state = env.reset()  # get new env and init_state
+    print("------------------{}--------------------------".format(i))
+    state,terminal_state = env.reset()  # get new env and init_state
     if state not in q_table:
         q_table[state] = np.zeros((N_ACTIONS,))  # init q_table
 
     while not terminal_state:  # terminal_state == True when the agent fall into pit, got the gold sth like that
-        if random.uniform(0, 1) > epsilon:
-            action = np.random.randint(1,8)  # choose a random action
+        if np.random.uniform(0, 1) > epsilon:
+            action = np.random.randint(0,8)  # choose a random action
         else:
             action = np.argmax(q_table[state])  # choose the optimal action
 
         # get next state, evaluate if it is a terminal state, and get reward(got to somehow design the reward)
+        location = state[0]
+        #print(location)
         next_state, terminal_state, reward = env.get_state(action)
 
         if next_state not in q_table:
