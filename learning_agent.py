@@ -24,14 +24,17 @@ class QLearningAgent(object):
         self.qtable = {}
 
     def get_action(self, state):
-        if state not in self.q_table:
-            q_table[state] = np.zeros(self.num_actions)
+        if state not in self.qtable:
+            self.qtable[state] = np.zeros(self.num_actions)
 
         if np.random.uniform(0, 1) > self.epsilon:
-            action = np.random.randint(1, 9)
+            action = np.random.randint(0, 8)
         else:
-            action = np.argmax(qtable[state])
+            action = np.argmax(self.qtable[state])
+        return action
 
     def update_qtable(self, state, action, reward, next_state):
-        self.qtable[state][action] += self.alpha * (reward + self.gamma * (
-            np.max(self.qtable[next_state])) - self.qtable[state][action])
+        if next_state not in self.qtable:
+            self.qtable[next_state] = np.zeros(self.num_actions)
+        self.qtable[state][action] = self.qtable[state][action] + (self.alpha * (
+            reward + self.gamma * (np.max(self.qtable[next_state])) - self.qtable[state][action]))

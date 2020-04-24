@@ -14,9 +14,8 @@ class Test(object):
         (next_state, terminal_state, reward) = self.env.get_state(action)
         return (state, action, next_state, reward, terminal_state)
 
-    def update(self, state, action, next_state, reward, terminal_state):
-        if not terminal_state:
-            self.agent.update_qtable(state, action, next_state, reward)
+    def update(self, state, action, next_state, reward):
+        self.agent.update_qtable(state, action, reward, next_state)
 
     def learn(self, num_of_episodes=1000, max_steps=1000):
         for episode in range(num_of_episodes):
