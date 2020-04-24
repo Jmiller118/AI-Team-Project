@@ -1,83 +1,36 @@
+from env import Environment
+from learning_agent import QLearningAgent
 
 
-class Test:
-    def __init__(self, env, agent, verbose=False):
-        self.env = env
-        self.agent = agent
-        self.verbose = verbose
+class Test(object):
 
+    def __init__(self, verbose=False):
+        self.env = Environment()
+        self.agent = QLearningAgent()
 
-    def step(self):
-        observe = self.env.detect_nearby()
-        action = self.agent.action(observe)
+    def move(self):
+        state = self.env.detect_nearby()
+        action = self.agent.get_action(state)
+        (next_state, terminal_state, reward) = self.env.get_state(action)
+        return (state, action, next_state, reward, terminal_state)
 
-        (reward, stop) = self.env.detect_nearby(action)
-        self.agent.reward(obverve, action, reward)
+    def update(self, state, action, next_state, reward, terminal_state):
+        if not terminal_state:
+            self.agent.update_qtable(state, action, next_state, reward)
 
-        return (observe, action, reward, stop)
-
-    def epoch(self, num, max_iter):
-        total = 0.0
-
-        for n in range(1, num + 1):
-            self.agent.reset()
+    def learn(self, num_of_episodes=1000, max_steps=1000):
+        for episode in range(num_of_episodes):
             self.env.reset()
+            for step in range(max_steps):
+                (s, a, next_s, r, end) = self.move()
+                if not end:
+                    self.update(s, a, next_s, r)
 
-            for i in range(1, max_iter + 1):
-                if self.verbose:
-                    print("Step {}:".format(i))
-                    self.env.display()
-
-                (observe, action, reward, stop) = self.epoch()
-                total += reward
-
-                if self.verbose:
-                    print(" ->      observe: {}".format(obverve))
-                    print(" ->      action: {}".format(action))
-                    print(" ->      reward: {}".format(reward))
-                    print(" ->      total: {}".format(total))
-
-                    if stop is None:
-                        print(" ->      Event: {}".format(stop))
-
-                    print()
-
-                if stop is not None:
-                    break
-            
-            if self.verbose:
-                print(" <=> Finished! Epoch: {} <=>".format(n))
-                print()
-
-        return total
-
-    def count(x, total):
-        if callable(x):
-            return [ x() for _ in range(total)]
-
-        else:
-            return list(iter(x))
-
-
-class Parallel:
-
-    def __init__(self, env, agent, num, verbose=False):
-        self.environmnets = count(env, num)
-        self.agents = count(agent, num)
-        assert(len(self.agents) == len(self.environments))
-        self.verbose = verbose
-        self.finished = [ False for _ in self.environments]
-
-    def episode(self, max_iter):
-        reward = []
-
-        for (agent, env) in zip(self.agents, self.environments):
-            agent.reset()
-            env.reset()
-            total = 0
-
-            for i in range(1, max_iter + 1):
-                observe = env.detect_nearby()
-                action = agent.action(observe)
-                (reward, stop) = end.action(action)
-                agent.
+    def hunt_the_wumpus(self):
+        self.env.reset()
+        (s, a, next_s, r, end) = self.move()
+        total_reward = r
+        if not end:
+            (s, a, next_s, r, end) = self.move()
+            total_reward += r
+        print(total_reward)
