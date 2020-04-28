@@ -21,7 +21,6 @@ class Environment(object):
     def __init__(self, grid=(4, 4), wumpus=1, cave=3, arrow=1):
         # lets make the environment for our agent
         self.grid = grid
-        # wtf is this?
         self.cases = grid[0] * grid[1]
         self.num_wumpus = wumpus
         self.num_cave = cave
