@@ -14,7 +14,6 @@ shoot_left = 7
 shoot_right = 8
 '''
 
-
 class Environment(object):
     actions = []
 
@@ -35,27 +34,28 @@ class Environment(object):
         self.gold_location = random_location[-2]
         self.cave_location = random_location[0: self.num_cave]
         self.wumpus_location = random_location[self.num_cave:-2]
-        self.wumpus = True
         self.reset()
 
-    def get_state(self, action):
+    def get_state(self,action):
         """Given action and location, return next state"""
         loc = self.agent
-        if action < 5:
+        if action > 4 and self.arrow > 0:
+            self.wumpus_alive = self.shoot_arrow(action)
+        else:
             self.agent = self.move(loc, action)
-        self.remove_gold()
+        state = self.detect_nearby()
         reward = self.reward(action)
+        self.remove_gold()
         terminal_state = self.terminal_state()
-        next_state = self.detect_nearby()
-        return next_state, terminal_state, reward
+        return state,terminal_state,reward
 
     def terminal_state(self):
-        """Check if it's terminal state"""
-        End_game_loc = self.cave_location + self.wumpuses
+        """Check if it's terminal state, Not finished"""
+        End_game_loc = self.cave_location + self.wumpus
         for terminal_loc in End_game_loc:
             if self.agent == terminal_loc:
                 return True
-        if self.agent == self.gold_location and self.gold == 0:
+        if self.agent == self.location and self.gold == 0:
             return True
         return False
 
@@ -63,10 +63,10 @@ class Environment(object):
         """Reset and return init state"""
         # reset for a new training
         self.arrow = self.num_arrow
-        self.wumpus_alive = self.wumpus
-        self.wumpuses = list(self.wumpus_location)
+        self.wumpus_alive = True
+        self.wumpus = list(self.wumpus_location)
         self.caves = list(self.cave_location)
-        self.gold = 1
+        self.gold = self.gold_location
         self.agent = self.location
         state, terminal_state, _ = self.get_state(0)
         state = tuple(state)
@@ -74,7 +74,7 @@ class Environment(object):
 
     def wumpus_nearby(self):
         (i, j) = self.agent
-        for (ii, jj) in self.wumpuses:
+        for (ii, jj) in self.wumpus:
             if (i - ii) ** 2 + (j - jj) ** 2 <= 1:
                 return True
         return False
@@ -86,14 +86,14 @@ class Environment(object):
                 return True
         return False
 
-    # def gold_underneath(self):
-    #     if self.gold == self.agent:
-    #         return True
-    #     return False
+    def gold_underneath(self):
+        if self.gold == self.agent:
+            return True
+        return False
 
     def detect_nearby(self):
         # if something is nearby it will detect it
-        return (self.agent, self.wumpus_nearby(), self.cave_nearby())
+        return self.agent, self.wumpus_nearby(), self.cave_nearby(), self.gold_underneath(),self.arrow
 
     def move(self, loc, act):
         (x, y) = loc
@@ -119,14 +119,13 @@ class Environment(object):
         return x, y
 
     def remove_gold(self):
-        if self.agent == self.gold_location:
+        if self.agent == self.gold:
             self.gold = 0
 
     def kill_wumpus(self, loc):
-        if loc in self.wumpuses:
-            self.wumpuses.remove(loc)
-            if len(self.wumpuses) == 0:
-                self.wumpus_alive = False
+        if loc in self.wumpus:
+            self.wumpus.remove(loc)
+            self.wumpus_alive = False
             return True
         return False
 
@@ -135,36 +134,37 @@ class Environment(object):
         (x, y) = self.agent
 
         if action == 5:
-            self.arrow -= 1
             return self.kill_wumpus((x, y + 1))
 
         elif action == 6:
-            self.arrow -= 1
             return self.kill_wumpus((x, y - 1))
 
         elif action == 7:
-            self.arrow -= 1
             return self.kill_wumpus((x - 1, y))
 
         elif action == 8:
-            self.arrow -= 1
             return self.kill_wumpus((x + 1, y))
 
     def reward(self, action):
 
         if self.agent in self.caves:
-            return -1000
+            return -100
 
-        if self.agent in self.wumpuses:
-            return -1000
+        if self.agent in self.wumpus:
+            return -100
 
-        if action > 4:
-            if self.shoot_arrow(action):
-                return 10
+        if action > 4 and self.arrow > 0:
+            if self.wumpus_alive:
+                self.arrow -= 1
+                return -1
             else:
-                return -10
+                self.arrow -= 1
+                return -1
 
-        if self.agent == self.gold_location:
+        if self.gold_underneath():
+            return 5
+
+        if self.agent == self.location and self.gold == 0:
             return 100
 
         return -1.0
@@ -181,13 +181,13 @@ class Environment(object):
             print("| ", end="")
 
             for x in range(self.grid[0]):
-                if (x, y) in self.wumpuses:
+                if (x, y) in self.wumpus:
                     print("W ", end='')
 
                 elif (x, y) in self.caves:
                     print("0 ", end='')
 
-                elif (x, y) == self.gold_location:
+                elif (x, y) == self.gold:
                     print("G ", end='')
 
                 elif (x, y) == self.agent:
