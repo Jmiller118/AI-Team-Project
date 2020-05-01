@@ -30,8 +30,8 @@ class Environment(object):
         self.wumpus_alive = None
         self.size = size
         y = size[1]-1
-        for row in rows[:size[1]+1]:
-            for x, loc in enumerate(row[:-1].split(',')):
+        for row in rows[:size[1]]:
+            for x, loc in enumerate(row[:size[0]].split(',')):
                 if loc == 'W':
                     self.wumpus = (x, y)
                 if loc == 'P':
@@ -172,10 +172,10 @@ class Environment(object):
                 return -100
 
         if self.agent == self.gold_location and self.gold:
-            return 49
+            return 75
 
         if self.agent == self.start_location and not self.gold:
-            return 49
+            return 25
 
         return -1
 

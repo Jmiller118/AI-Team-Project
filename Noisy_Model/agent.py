@@ -18,10 +18,21 @@ Shoot Left = 7
 
 class Agent(object):
 
-    def __init__(self, env):
+    def __init__(self, env, verbose=False):
         self.env = env
+        self.verbose = verbose
         self.N_ACTIONS = 8
         self.qtable = {}
+        self.action_lookup = {
+            0: 'Move Up',
+            1: 'Move Right',
+            2: 'Move Down',
+            3: 'Move Left',
+            4: 'Shoot Up',
+            5: 'Shoot Right',
+            6: 'Shoot Down',
+            7: 'Shoot Left'
+        }
 
     def reset(self):
         self.env.reset()
@@ -61,17 +72,18 @@ class Agent(object):
                 total_reward += reward
                 num_moves += 1
 
-            if epoch % 100 == 0:
-                plot_rewards.append(self.test_env())
-
             if epoch % 1000 == 0:
                 print('qlearning {}%'.format((epoch*100)/epochs))
 
-            if epoch % 20000 == 0:
-                plt.ioff()
-                yhat = savgol_filter(plot_rewards, 51, 3)
-                plt.plot(plot_rewards)
-                plt.show()
+            if self.verbose:
+                if epoch < 100 or epoch % 100 == 0:
+                    plot_rewards.append(self.test_env())
+
+                if epoch % 20000 == 0:
+                    plt.ioff()
+                    yhat = savgol_filter(plot_rewards, 51, 3)
+                    plt.plot(plot_rewards)
+                    plt.show()
         print('qlearning done')
         # for x in range(self.env.size[0]):
         #     for y in range(self.env.size[1]):
@@ -98,27 +110,38 @@ class Agent(object):
         end = False
         action = None
         while not end and num_moves < max_moves:
-            # self.env.display_grid()
+            if self.verbose:
+                self.env.display_grid()
             if state[-1]:
                 action = np.argmax(self.qtable[state])
             else:
                 action = np.argmax(self.qtable[state][:self.N_ACTIONS-4])
-            # print(action)
+            if self.verbose:
+                print('Action: {}'.format(self.action_lookup[action]))
             next_state, end, reward = self.env.get_state(action)
             if next_state not in self.qtable:
                 self.qtable[next_state] = np.zeros(self.N_ACTIONS)
             state = next_state
             total_reward += reward
             num_moves += 1
-        # self.env.display_grid()
-        # print(total_reward)
-        # raw_input()
+        if self.verbose:
+            self.env.display_grid()
+            print(total_reward)
         return total_reward
 
     # run multiple times
     def test_env_n(self, games=100):
         rewards = []
+        won = 0
+        lost = 0
         for game in range(games):
-            rewards.append(self.test_env())
+            reward = self.test_env()
+            if reward > 0:
+                won += 1
+            else:
+                lost += 1
+            rewards.append(reward)
         avg_reward = sum(rewards)/len(rewards)
+        print('won : {}'.format(won))
+        print('lost: {}'.format(lost))
         print(avg_reward)
