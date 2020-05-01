@@ -4,14 +4,6 @@ Team Members: Jordan Miller, Guangyu Nie, Abdul Rahman Zindani, Aakarsh Reddy Du
 
 Topic: Reinforcement Learning - #5
 
-Contributions of each team member: 
-      Jordan - env.py
-      Guangyu -   Q-learning.py
-      Aakarsh - learning_agent.py, test.py
-      Abdul - helped write paper
-      
-      
 How to run the code from scratch:
-
 
 Overleaf:https://www.overleaf.com/4923456845kypzbcmqrzmr
