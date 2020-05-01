@@ -31,7 +31,7 @@ class Environment(object):
         self.size = size
         y = size[1]-1
         for row in rows[:size[1]]:
-            for x, loc in enumerate(row[:size[0]].split(',')):
+            for x, loc in enumerate(row[:-1].split(',')):
                 if loc == 'W':
                     self.wumpus = (x, y)
                 if loc == 'P':
