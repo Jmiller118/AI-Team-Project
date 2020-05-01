@@ -1,4 +1,5 @@
 Setting:
+<pre>
 +---------+
 | . . . . |
 | 0 0 X . |
@@ -39,10 +40,10 @@ get out of the cave with gold: 100
 
 For logic agent:
 Tested over 11 possible initial position
-score: 95, -2, 93, -8, -9, -2, -8, -9, -8, -9, -9
+score: 
 
 For RL:
 Average score over 1000 times random initial position
 score: 8 out of 100
 
-
+</pre>
