@@ -1,4 +1,5 @@
 Setting:
+<pre>
 +---------+
 | . . . . |
 | 0 0 X . |
@@ -40,4 +41,4 @@ For RL:
 Average score over 1000 times random initial position
 score: 72 out of 100
 
-
+</pre>
