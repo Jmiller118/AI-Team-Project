@@ -25,5 +25,5 @@ optional arguments:
   --verbose          verbose logging
   </pre>
 
-Overleaf: https://www.overleaf.com/4923456845kypzbcmqrzmr
+Overleaf: https://www.overleaf.com/4923456845kypzbcmqrzmr  
 Github: https://github.com/Jmiller118/AI-Team-Project
