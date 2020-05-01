@@ -23,6 +23,6 @@ optional arguments:
   --epochs EPOCHS    number of epochs
   --games GAMES      number of games
   --verbose          verbose logging
-  <pre/>
+  </pre>
 
 Overleaf:https://www.overleaf.com/4923456845kypzbcmqrzmr
