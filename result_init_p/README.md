@@ -6,7 +6,6 @@ Setting:
 | W . 0 . |
 | . G . . |
 +--------+ 
-</pre>
 X location radomized
 
 1. Stochastic Action:
@@ -33,10 +32,10 @@ shoot: -1
 get out of the cave with gold: 100
 
 6. Result
-
 For logic agent:
 Tested over 11 possible initial position
 score: 95, -2, 93, -8, -9, -2, -8, -9, -8, -9, -9
+</pre>
 
 For RL:
 Average score over 1000 times random initial position
