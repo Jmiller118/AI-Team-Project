@@ -1,10 +1,12 @@
 Setting:
+<pre>
 +---------+  <br />
 | . . . . |  <br />
 | 0 0 X . |  <br />
 | W . 0 . |  <br />
 | . G . . |  <br />
 +--------+  <br />
+</pre>
 X location radomized
 
 1. Stochastic Action:
