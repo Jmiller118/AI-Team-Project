@@ -101,7 +101,7 @@ class Agent(object):
         #                                     self.qtable[state][:self.N_ACTIONS-4])))
         pickle.dump(self.qtable, open('qtable.pkl', 'wb'))
 
-    def test_env(self, max_moves=100):
+    def test_env(self, max_moves=100, show_grid=False):
         state = self.env.reset()
         if state not in self.qtable:
             self.qtable[state] = np.zeros(self.N_ACTIONS)
@@ -110,13 +110,13 @@ class Agent(object):
         end = False
         action = None
         while not end and num_moves < max_moves:
-            if self.verbose:
+            if show_grid:
                 self.env.display_grid()
             if state[-1]:
                 action = np.argmax(self.qtable[state])
             else:
                 action = np.argmax(self.qtable[state][:self.N_ACTIONS-4])
-            if self.verbose:
+            if show_grid:
                 print('Action: {}'.format(self.action_lookup[action]))
             next_state, end, reward = self.env.get_state(action)
             if next_state not in self.qtable:
@@ -124,7 +124,7 @@ class Agent(object):
             state = next_state
             total_reward += reward
             num_moves += 1
-        if self.verbose:
+        if show_grid:
             self.env.display_grid()
             print(total_reward)
         return total_reward
@@ -135,7 +135,7 @@ class Agent(object):
         won = 0
         lost = 0
         for game in range(games):
-            reward = self.test_env()
+            reward = self.test_env(show_grid=self.verbose)
             if reward > 0:
                 won += 1
             else:
