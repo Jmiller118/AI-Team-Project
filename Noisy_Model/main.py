@@ -9,11 +9,13 @@ parser.add_argument('--gamma', type=float, default=0.9, help='discount factor')
 parser.add_argument('--epsilon', type=float, default=0.2, help='epsilon')
 parser.add_argument('--epochs', type=int, default=100000,
                     help='number of epochs')
-parser.add_argument('--verbose', default=False, help='verbose logging', action='store_true')
+parser.add_argument('--games', type=int, default=1000, help='number of games')
+parser.add_argument('--verbose', default=False,
+                    help='verbose logging', action='store_true')
 
 args = parser.parse_args()
 
 env = Environment(args.layout)
 agent = Agent(env, args.verbose)
 agent.qlearning(args.alpha, args.gamma, args.epsilon, args.epochs)
-agent.test_env_n()
+agent.test_env_n(args.games)

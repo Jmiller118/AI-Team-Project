@@ -30,8 +30,9 @@ class Environment(object):
         self.wumpus_alive = None
         self.size = size
         y = size[1]-1
-        for row in rows[:size[1]]:
-            for x, loc in enumerate(row[:-1].split(',')):
+        for row in rows[:self.size[1]]:
+            row = row.rstrip()
+            for x, loc in enumerate(row.split(',')[:self.size[0]]):
                 if loc == 'W':
                     self.wumpus = (x, y)
                 if loc == 'P':

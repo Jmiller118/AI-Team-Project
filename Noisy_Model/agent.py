@@ -40,7 +40,7 @@ class Agent(object):
     def load_qtable(self, filepath):
         self.qtable = pickle.load(open(filepath), 'rb')
 
-    def qlearning(self, alpha=0.2, gamma=0.9, epsilon=0.4, epochs=100000, max_moves=100):
+    def qlearning(self, alpha, gamma, epsilon, epochs, max_moves=100):
         plot_rewards = []
         for epoch in range(1, epochs+1):
             state = self.env.reset()
@@ -130,7 +130,7 @@ class Agent(object):
         return total_reward
 
     # run multiple times
-    def test_env_n(self, games=100):
+    def test_env_n(self, games):
         rewards = []
         won = 0
         lost = 0
