@@ -73,7 +73,7 @@ class Environment(object):
 
     def Stench(self):
         (i, j) = self.agent
-        if (i - self.wumpus[0]) ** 2 + (j - self.wumpus[1]) ** 2 <= 1:
+        if self.wumpus_alive and (i - self.wumpus[0]) ** 2 + (j - self.wumpus[1]) ** 2 <= 1:
             return True
         return False
 
@@ -163,19 +163,19 @@ class Environment(object):
             return -100
 
         if action >= 4 and self.arrow:
-            self.wumpus_alive = self.shoot_arrow(action)
+            self.shoot_arrow(action)
             if not self.wumpus_alive:
                 self.arrow = False
                 return 10
             else:
                 self.arrow = False
-                return -1
+                return -100
 
         if self.agent == self.gold_location and self.gold:
-            return 40
+            return 49
 
         if self.agent == self.start_location and not self.gold:
-            return 60
+            return 49
 
         return -1
 

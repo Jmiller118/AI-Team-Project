@@ -1,8 +1,8 @@
 from agent import Agent
-from env import Environment
+from wumpus_env import Environment
 
 env = Environment('test.lay')
 agent = Agent(env)
 
-agent.qlearning(epochs=10000)
-agent.test_env()
+agent.qlearning()
+agent.test_env_n()

@@ -29,7 +29,7 @@ class Agent(object):
     def load_qtable(self, filepath):
         self.qtable = pickle.load(open(filepath), 'rb')
 
-    def qlearning(self, alpha=0.2, gamma=0.9, epsilon=0.4, epochs=30000, max_moves=100):
+    def qlearning(self, alpha=0.2, gamma=0.9, epsilon=0.4, epochs=100000, max_moves=100):
         plot_rewards = []
         for epoch in range(1, epochs+1):
             state = self.env.reset()
@@ -40,7 +40,7 @@ class Agent(object):
             end = False
             action = None
             while not end and num_moves < max_moves:
-                if np.random.uniform > epsilon:
+                if np.random.uniform() > epsilon:
                     if state[-1]:
                         action = np.random.choice([i for i in range(
                             self.N_ACTIONS) if self.qtable[state][i] == np.max(self.qtable[state])])
@@ -60,15 +60,34 @@ class Agent(object):
                 state = next_state
                 total_reward += reward
                 num_moves += 1
-            plot_rewards.append(total_reward)
 
-            # if epoch % 1000 == 0:
-            #     yhat = savgol_filter(plot_rewards, 51, 3)
-            #     plt.plot(plot_rewards)
-            #     plt.show()
+            if epoch % 100 == 0:
+                plot_rewards.append(self.test_env())
 
-        pickle.dump(self.qtable, open('qtable.pkl', 'wb'))
+            if epoch % 1000 == 0:
+                print('qlearning {}%'.format((epoch*100)/epochs))
+
+            if epoch % 20000 == 0:
+                plt.ioff()
+                yhat = savgol_filter(plot_rewards, 51, 3)
+                plt.plot(plot_rewards)
+                plt.show()
         print('qlearning done')
+        # for x in range(self.env.size[0]):
+        #     for y in range(self.env.size[1]):
+        #         for stench in [True, False]:
+        #             for breeze in [True, False]:
+        #                 for gold in [True, False]:
+        #                     for arrow in [True, False]:
+        #                         state = ((x, y), stench, breeze, gold, arrow)
+        #                         if ((x, y), stench, breeze, gold, arrow) in self.qtable:
+        #                             if arrow:
+        #                                 print('{} : {}'.format(
+        #                                     state, np.argmax(self.qtable[state])))
+        #                             else:
+        #                                 print('{} : {}'.format(state, np.argmax(
+        #                                     self.qtable[state][:self.N_ACTIONS-4])))
+        pickle.dump(self.qtable, open('qtable.pkl', 'wb'))
 
     def test_env(self, max_moves=100):
         state = self.env.reset()
@@ -79,19 +98,27 @@ class Agent(object):
         end = False
         action = None
         while not end and num_moves < max_moves:
-            self.env.display_grid()
+            # self.env.display_grid()
             if state[-1]:
-                action = np.random.choice([i for i in range(
-                    self.N_ACTIONS) if self.qtable[state][i] == np.max(self.qtable[state])])
+                action = np.argmax(self.qtable[state])
             else:
-                action = np.random.choice([i for i in range(
-                    self.N_ACTIONS-4) if self.qtable[state][i] == np.max(self.qtable[state][:self.N_ACTIONS-4])])
-            print(action)
+                action = np.argmax(self.qtable[state][:self.N_ACTIONS-4])
+            # print(action)
             next_state, end, reward = self.env.get_state(action)
             if next_state not in self.qtable:
                 self.qtable[next_state] = np.zeros(self.N_ACTIONS)
             state = next_state
             total_reward += reward
             num_moves += 1
-        self.env.display_grid()
-        print(total_reward)
+        # self.env.display_grid()
+        # print(total_reward)
+        # raw_input()
+        return total_reward
+
+    # run multiple times
+    def test_env_n(self, games=100):
+        rewards = []
+        for game in range(games):
+            rewards.append(self.test_env())
+        avg_reward = sum(rewards)/len(rewards)
+        print(avg_reward)
